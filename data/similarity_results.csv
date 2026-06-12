@@ -1,0 +1,5 @@
+Date,Crop,Similarity Score,Success Probability,Risk Level
+2026-05-22,Maize,55.33,100.0,high
+2026-05-22,Cotton,54.81,100.0,high
+2026-05-22,Soybean,42.45,100.0,high
+2026-05-22,Wheat,33.75,79.73,high

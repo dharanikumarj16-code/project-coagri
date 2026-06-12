@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Advanced Scalable KNN-based Climate Similarity and Daily Crop Scheduling Engine for Agriculture AI systems.">
+    <title>SmartFarm AI: KNN Climate Similarity & Scheduler Engine</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0a0f1d;
+            --bg-glass: rgba(16, 24, 48, 0.65);
+            --bg-glass-hover: rgba(22, 34, 68, 0.8);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --primary: #10b981;
+            --primary-glow: rgba(16, 185, 129, 0.35);
+            --accent-blue: #3b82f6;
+            --accent-gold: #f59e0b;
+            --accent-red: #ef4444;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.08) 0px, transparent 50%);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+        }
+
+        /* Container Layout */
+        .app-container {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 320px;
+            background: var(--bg-glass);
+            border-right: 1px solid var(--border-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 2.5rem 1.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #10b981, #3b82f6);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 1.5rem;
+            box-shadow: 0 8px 20px var(--primary-glow);
+        }
+
+        .logo-text {
+            font-family: var(--font-display);
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #ffffff, #9ca3af);
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #d1d5db;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            color: var(--text-main);
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.25);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            padding: 0.85rem 1.5rem;
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Main Workspace Styling */
+        .main-content {
+            flex-grow: 1;
+            padding: 2.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
+        header.dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title-group h1 {
+            font-family: var(--font-display);
+            font-size: 2.25rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .header-title-group p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .location-badge {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 0.5rem 1.25rem;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .location-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--primary);
+            animation: pulse 2s infinite;
+        }
+
+        /* Dashboard Content Grids */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Glassmorphic Cards */
+        .card {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            background: var(--bg-glass-hover);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .crop-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .crop-name {
+            font-family: var(--font-display);
+            font-size: 1.35rem;
+            font-weight: 700;
+        }
+
+        .risk-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 0.25rem 0.65rem;
+            border-radius: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .risk-low {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .risk-medium {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .risk-high {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .metric-group {
+            margin-bottom: 1rem;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.35rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 1s ease-out;
+        }
+
+        .fill-primary {
+            background: linear-gradient(90deg, #10b981, #34d399);
+        }
+
+        .fill-blue {
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+        }
+
+        /* Interactive Timeline Section */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header h2 {
+            font-family: var(--font-display);
+            font-size: 1.65rem;
+            font-weight: 700;
+        }
+
+        .timeline-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 480px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        /* Custom scrollbar for glass panel */
+        .timeline-container::-webkit-scrollbar,
+        .main-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .timeline-container::-webkit-scrollbar-track,
+        .main-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .timeline-container::-webkit-scrollbar-thumb,
+        .main-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .timeline-container::-webkit-scrollbar-thumb:hover,
+        .main-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .timeline-item {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 14px;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .timeline-item:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            background: rgba(22, 34, 68, 0.75);
+            transform: translateX(4px);
+        }
+
+        .timeline-day {
+            width: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px solid var(--border-glass);
+            padding-right: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .day-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .day-date {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+            white-space: nowrap;
+        }
+
+        .timeline-stage {
+            width: 200px;
+            flex-shrink: 0;
+        }
+
+        .stage-title {
+            font-family: var(--font-display);
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .stage-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .timeline-metrics {
+            display: flex;
+            gap: 1.5rem;
+            flex-grow: 1;
+            justify-content: space-around;
+        }
+
+        .sub-metric {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sub-metric-val {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+
+        .sub-metric-lbl {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+        }
+
+        .timeline-actions {
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            border-left: 1px solid var(--border-glass);
+            padding-left: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .action-item {
+            font-size: 0.8rem;
+            color: #d1d5db;
+            line-height: 1.4;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.4rem;
+        }
+
+        .action-bullet {
+            width: 6px;
+            height: 6px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            margin-top: 0.35rem;
+            flex-shrink: 0;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
+        /* Loading Screen overlay styling */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 15, 29, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1.5rem;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(16, 185, 129, 0.15);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s infinite linear;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <div class="logo-icon">&#x1f331;</div>
+                <div class="logo-text">SmartFarm AI</div>
+            </div>
+
+            <!-- Parameters controls form -->
+            <div class="sidebar-section">
+                <span class="section-title">Execution Controls</span>
+                <div class="form-group">
+                    <label class="form-label" for="cropInput">Target Growth Plan Crop</label>
+                    <input type="text" id="cropInput" class="form-control" placeholder="Type crop (e.g. Rice, Wheat, Mango)..." list="cropOptions" value="rice" onchange="checkAndRunPipeline()">
+                    <datalist id="cropOptions">
+                        <!-- Dynamic options will be loaded here -->
+                    </datalist>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="startDateInput">Planting Date</label>
+                    <input type="date" id="startDateInput" class="form-control" value="2026-05-19">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="latitudeInput">Latitude Coordinates</label>
+                    <input type="number" id="latitudeInput" class="form-control" step="0.0001" value="28.6139">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="longitudeInput">Longitude Coordinates</label>
+                    <input type="number" id="longitudeInput" class="form-control" step="0.0001" value="77.2090">
+                </div>
+                
+                <button class="btn-primary" style="background: linear-gradient(135deg, #3b82f6, #2563eb); margin-bottom: 0.5rem;" onclick="autoDetectLocation()">
+                    <span>&#x1F4CD;</span> Auto-Detect Location
+                </button>
+
+                <button id="runPipelineBtn" class="btn-primary" onclick="triggerPipelineRun()">
+                    <span>&#x2699;</span> Run Model Engine
+                </button>
+            </div>
+
+            <div class="sidebar-section" style="margin-top: auto;">
+                <span class="section-title">System Status</span>
+                <div class="form-group" style="flex-direction: row; align-items: center; gap: 0.5rem;">
+                    <div class="location-dot"></div>
+                    <span id="systemStatusText" style="font-size: 0.8rem; font-weight: 600; color: #10b981;">Calculation
+                        Pipeline Ready</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="main-content">
+            <header class="dashboard-header">
+                <div class="header-title-group">
+                    <h1>KNN Climate Similarity &amp; Viability Engine</h1>
+                    <p>Dynamic forecasting, crop suitability matrix, and automated daily planning engine.</p>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem;">
+
+                    <div class="location-badge">
+                        <div class="location-dot"></div>
+                        <span id="resolvedLocationBadge">Dynamic Loc: New Delhi, India</span>
+                    </div>
+                    <div id="recommendationsBadge" class="location-badge" style="display: none; border-color: var(--accent-gold); color: var(--accent-gold);">
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard View Panel -->
+            <div id="dashboardView">
+                <!-- Section 1: Analytics & Mathematical Visualization -->
+                <section style="margin-bottom: 2rem;">
+                    <div class="section-header">
+                        <h2>Climate Analytics &amp; Mathematical Visualization</h2>
+                        <span style="font-size: 0.85rem; color: var(--text-muted);">Vector distance analysis and time-series deviation functions</span>
+                    </div>
+
+                    <div class="dashboard-grid" style="grid-template-columns: repeat(2, 1fr);">
+                        <!-- Two-Line Function Graph -->
+                        <div class="card" style="grid-column: span 2;">
+                            <h3 style="margin-bottom: 1rem; font-size: 1rem; color: var(--primary);">Time-Series Comparison: Historical vs. Forecast</h3>
+                            <div style="height: 300px;">
+                                <canvas id="timeseriesChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Euclidean Distance Visualization -->
+                        <div class="card">
+                            <h3 style="margin-bottom: 1rem; font-size: 1rem; color: var(--accent-blue);">L2 (Euclidean) Distance Sequence</h3>
+                            <div style="height: 200px;">
+                                <canvas id="distanceChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Difference Function -->
+                        <div class="card">
+                            <h3 style="margin-bottom: 1rem; font-size: 1rem; color: var(--accent-red);">Climate Deviation Function (Diff)</h3>
+                            <div style="height: 200px;">
+                                <canvas id="diffChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 2: Crop Comparison Matrix -->
+                <section>
+                    <div class="section-header">
+                        <h2>Crop Climate Similarity Matrix</h2>
+                        <span style="font-size: 0.85rem; color: var(--text-muted);">Matches 30-day forecast against
+                            historical successful crop records</span>
+                    </div>
+
+                    <div id="cropGridContainer" class="dashboard-grid">
+                        <!-- Cards will be dynamically inserted here -->
+                    </div>
+                </section>
+
+                <!-- Section 2: Interactive Scheduling and Irrigation Planner -->
+                <section style="margin-top: 2rem;">
+                    <div class="section-header">
+                        <h2>Target Crop 30-Day Growth Schedule</h2>
+                        <span id="scheduleSubhead" style="font-size: 0.85rem; color: var(--text-muted);">Automated lifecycle
+                            daily planning &amp; irrigation recommendation system</span>
+                    </div>
+
+                    <div id="timelineList" class="timeline-container">
+                        <!-- Schedule items will be dynamically inserted here -->
+                    </div>
+                </section>
+            </div>
+
+
+        </main>
+    </div>
+
+    <!-- Loading overlay screen -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Running KNN calculation pipeline... Please wait.</div>
+    </div>
+
+    <!-- Frontend logic scripts -->
+    <script>
+        const BACKEND_URL = window.location.protocol === 'file:' ? 'http://127.0.0.1:8000' : '';
+
+        let charts = {};
+
+        function initCharts() {
+            const chartConfig = (label, color) => ({
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: []
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#9ca3af' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#9ca3af' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: { color: '#f3f4f6', font: { family: 'Plus Jakarta Sans' } }
+                        }
+                    }
+                }
+            });
+
+            charts.timeseries = new Chart(document.getElementById('timeseriesChart'), chartConfig());
+            charts.distance = new Chart(document.getElementById('distanceChart'), chartConfig());
+            charts.diff = new Chart(document.getElementById('diffChart'), chartConfig());
+        }
+
+        function updateCharts(vizData) {
+            if (!vizData || !vizData.forecast || !vizData.historical) return;
+
+            const labels = vizData.forecast.map((_, i) => `Day ${i + 1}`);
+            
+            // 1. Time-Series: Temperature Comparison
+            charts.timeseries.data.labels = labels;
+            charts.timeseries.data.datasets = [
+                {
+                    label: 'Historical Ideal Temp (°C)',
+                    data: vizData.historical.map(d => d.temp),
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                },
+                {
+                    label: 'Forecast Temp (°C)',
+                    data: vizData.forecast.map(d => d.temp),
+                    borderColor: '#3b82f6',
+                    borderDash: [5, 5],
+                    tension: 0.4
+                }
+            ];
+            charts.timeseries.update();
+
+            // 2. Euclidean Distance
+            const distances = vizData.scaled_forecast.map((fVec, i) => {
+                const hVec = vizData.scaled_historical[i];
+                // d = sqrt( sum( (f-h)^2 ) )
+                const sumSq = fVec.reduce((sum, val, idx) => sum + Math.pow(val - hVec[idx], 2), 0);
+                return Math.sqrt(sumSq);
+            });
+
+            charts.distance.data.labels = labels;
+            charts.distance.data.datasets = [{
+                label: 'L2 Distance',
+                data: distances,
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                fill: true,
+                pointRadius: 0
+            }];
+            charts.distance.update();
+
+            // 3. Difference Function (Forecast - Historical)
+            const diffs = vizData.forecast.map((f, i) => f.temp - vizData.historical[i].temp);
+            charts.diff.data.labels = labels;
+            charts.diff.data.datasets = [{
+                label: 'Temp Deviation (Δ°C)',
+                data: diffs,
+                borderColor: '#ef4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                fill: { target: 'origin', above: 'rgba(239, 68, 68, 0.2)', below: 'rgba(16, 185, 129, 0.2)' },
+                tension: 0.4
+            }];
+            charts.diff.update();
+        }
+
+        // Fetch API matching results and schedules
+        async function fetchDashboardData(crop = "wheat", lat = 28.6139, lon = 77.2090, startDate = "") {
+            try {
+                // Fetch similarity matrix
+                let url = `${BACKEND_URL}/api/similarity?lat=${lat}&lon=${lon}&crop=${crop}`;
+                if (startDate) {
+                    url += `&start_date=${startDate}`;
+                }
+                const simRes = await fetch(url);
+                const data = await simRes.json();
+
+                if (data.status === "success") {
+                    updateCropMatrixUI(data.crop_comparisons);
+                    updateScheduleTimelineUI(data.schedule, data.crop);
+                    updateCharts(data.visualization_data);
+
+                    if (data.location) {
+                        document.getElementById("resolvedLocationBadge").textContent = `Dynamic Loc: ${data.location.city}, ${data.location.country} (${lat.toFixed(2)}, ${lon.toFixed(2)})`;
+                    }
+                    
+                    const recBadge = document.getElementById("recommendationsBadge");
+                    if (data.recommendations && data.recommendations.length > 0) {
+                        const topRec = data.recommendations[0];
+                        recBadge.innerHTML = `<span>&#x1F4A1; Tip: Delaying to ${topRec.start_date} raises success to ${topRec.success_probability.toFixed(1)}%</span>`;
+                        recBadge.style.display = "flex";
+                    } else {
+                        recBadge.style.display = "none";
+                    }
+                } else {
+                    alert("Failed to compute similarity scores: " + data.message);
+                }
+            } catch (err) {
+                console.error("Error loading API data:", err);
+                alert("Failed to connect to backend server.");
+            }
+        }
+
+        function updateCropMatrixUI(comparisons) {
+            const container = document.getElementById("cropGridContainer");
+            container.innerHTML = ""; // Clear existing
+
+            comparisons.forEach(item => {
+                const card = document.createElement("div");
+                card.className = "card";
+
+                const cropName = item.crop;
+                const sim = item.similarity_score;
+                const successProb = item.success_probability;
+                const risk = item.risk_level;
+
+                card.innerHTML = `
+                    <div class="crop-card-header">
+                        <span class="crop-name">${cropName}</span>
+                        <span class="risk-badge risk-${risk.toLowerCase()}">${risk}</span>
+                    </div>
+                    <div class="metric-group">
+                        <div class="metric-label">
+                            <span>Climate Similarity</span>
+                            <span>${sim.toFixed(1)}%</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill fill-primary" style="width: ${sim}%"></div>
+                        </div>
+                    </div>
+                    <div class="metric-group" style="margin-bottom: 0;">
+                        <div class="metric-label">
+                            <span>Success Probability</span>
+                            <span>${successProb.toFixed(1)}%</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill fill-blue" style="width: ${successProb}%"></div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function updateScheduleTimelineUI(schedule, activeCrop) {
+            document.getElementById("scheduleSubhead").textContent = `Automated daily planning, irrigation system and lifecycle stage tracking for ${activeCrop.toUpperCase()}`;
+
+            const container = document.getElementById("timelineList");
+            container.innerHTML = "";
+
+            schedule.forEach(day => {
+                const item = document.createElement("div");
+                item.className = "timeline-item";
+
+                let actionHTML = "";
+                day.actions.forEach(action => {
+                    actionHTML += `
+                        <div class="action-item">
+                            <span class="action-bullet"></span>
+                            <span>${action}</span>
+                        </div>
+                    `;
+                });
+
+                item.innerHTML = `
+                    <div class="timeline-day">
+                        <span class="day-title">D-${day.day}</span>
+                        <span class="day-date">${day.date}</span>
+                    </div>
+                    <div class="timeline-stage">
+                        <span class="stage-title">${day.stage}</span>
+                        <span class="stage-desc">Growth Phase Stage</span>
+                    </div>
+                    <div class="timeline-metrics">
+                        <div class="sub-metric">
+                            <span class="sub-metric-val">${day.temperature.toFixed(1)}°C</span>
+                            <span class="sub-metric-lbl">Forecast Temp</span>
+                        </div>
+                        <div class="sub-metric">
+                            <span class="sub-metric-val">${day.humidity.toFixed(0)}%</span>
+                            <span class="sub-metric-lbl">Humidity</span>
+                        </div>
+                        <div class="sub-metric">
+                            <span class="sub-metric-val" style="color: ${day.irrigation_needed ? '#fbbf24' : '#10b981'}">
+                                ${day.irrigation_volume_mm.toFixed(1)} mm
+                            </span>
+                            <span class="sub-metric-lbl">Recommended Water</span>
+                        </div>
+                    </div>
+                    <div class="timeline-actions">
+                        ${actionHTML}
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        async function autoDetectLocation() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        document.getElementById("latitudeInput").value = position.coords.latitude.toFixed(4);
+                        document.getElementById("longitudeInput").value = position.coords.longitude.toFixed(4);
+                    },
+                    (error) => {
+                        alert("Geolocation auto-detect failed: " + error.message);
+                    }
+                );
+            } else {
+                alert("Geolocation is not supported by your browser.");
+            }
+        }
+
+        // Fetch available crops and populate datalist
+        async function loadCrops() {
+            try {
+                const res = await fetch(`${BACKEND_URL}/api/crops`);
+                const data = await res.json();
+                if (data.status === "success") {
+                    const datalist = document.getElementById("cropOptions");
+                    datalist.innerHTML = "";
+                    data.crops.forEach(crop => {
+                        const option = document.createElement("option");
+                        option.value = crop;
+                        datalist.appendChild(option);
+                    });
+                    
+                    // Set default value if list is available
+                    if (data.crops.length > 0) {
+                        const input = document.getElementById("cropInput");
+                        if (!input.value) input.value = data.crops[0];
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to load crops:", err);
+            }
+        }
+
+        async function checkAndRunPipeline() {
+            const crop = document.getElementById("cropInput").value;
+            const options = Array.from(document.getElementById("cropOptions").options).map(opt => opt.value);
+            // If the user selects a valid option or types something significant, we can auto-run
+            if (crop && (options.includes(crop) || crop.length > 3)) {
+                console.log("[UI] Valid crop detected. Auto-triggering calculation engine...");
+                triggerPipelineRun();
+            }
+        }
+
+        // Run data pipeline
+        async function triggerPipelineRun() {
+            const crop = document.getElementById("cropInput").value;
+            const lat = parseFloat(document.getElementById("latitudeInput").value);
+            const lon = parseFloat(document.getElementById("longitudeInput").value);
+            const startDate = document.getElementById("startDateInput").value;
+
+            const overlay = document.getElementById("loadingOverlay");
+            overlay.style.display = "flex";
+
+            try {
+                const res = await fetch(`${BACKEND_URL}/api/run-pipeline`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ crop, lat, lon })
+                });
+                const data = await res.json();
+
+                if (data.status === "success") {
+                    // Re-fetch similarities
+                    await fetchDashboardData(crop, lat, lon, startDate);
+                } else {
+                    alert("Data pipeline execution error: " + data.message);
+                }
+            } catch (err) {
+                console.error("Failed to run models:", err);
+                alert("Connection failed.");
+            } finally {
+                overlay.style.display = "none";
+            }
+        }
+
+        // Initialize dashboard on load
+        window.addEventListener("DOMContentLoaded", async () => {
+            initCharts();
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById("startDateInput").value = today;
+            
+            await loadCrops();
+            
+            const initialCrop = document.getElementById("cropInput").value || "rice";
+            fetchDashboardData(initialCrop, 28.6139, 77.2090, today);
+        });
+
+    </script>
+</body>
+
+</html>

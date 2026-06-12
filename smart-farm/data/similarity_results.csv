@@ -1,0 +1,5 @@
+Date,Crop,Similarity Score,Success Probability,Risk Level,Optimal Weather,Forecast Weather
+Unknown,Maize,30.61,30.61,high,"{'temp': 24.93, 'humidity': 65.1, 'rainfall': 108.215}","{'temp': 27.929999999999993, 'humidity': 61.24199999999999, 'rainfall': 0.968}"
+Unknown,Cotton,30.04,30.04,high,"{'temp': 27.615000000000002, 'humidity': 54.01, 'rainfall': 97.59}","{'temp': 27.929999999999993, 'humidity': 61.24199999999999, 'rainfall': 0.968}"
+Unknown,Soybean,18.02,18.02,high,"{'temp': 22.005000000000003, 'humidity': 71.15, 'rainfall': 93.195}","{'temp': 27.929999999999993, 'humidity': 61.24199999999999, 'rainfall': 0.968}"
+Unknown,Wheat,11.39,9.08,high,"{'temp': 17.53, 'humidity': 59.095, 'rainfall': 16.384999999999998}","{'temp': 27.929999999999993, 'humidity': 61.24199999999999, 'rainfall': 0.968}"
