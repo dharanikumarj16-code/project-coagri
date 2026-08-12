@@ -26,11 +26,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Verify Code Syntax
+      - name: Run Pytest Test Automation Suite
         run: |
-          python -m py_compile smart-farm/main.py
-          python -m py_compile smart-farm/prediction_engine.py
-          python -m py_compile smart-farm/crop_dataset_loader.py
+          pytest -v
+
 
   docker-build-and-push:
     name: Build & Push Docker Image

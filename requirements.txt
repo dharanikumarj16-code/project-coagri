@@ -2,8 +2,10 @@ fastapi
 uvicorn
 pandas
 numpy
-scikit-learn    
+scikit-learn
 requests
 pydantic
 python-multipart
 jinja2
+pytest
+httpx
